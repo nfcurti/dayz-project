@@ -1,0 +1,152 @@
+{*
+Copyright (C) 2019  Daniel Dolejška
+
+This program is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with this program.  If not, see <http://www.gnu.org/licenses/>.
+*}
+<!DOCTYPE html>
+<html lang="en" prefix="og: http://ogp.me/ns#">
+<head>
+	<title>{ifset title}{include title|stripHtml} - {elseifset $title}{$title} - {/ifset}{$service->meta->siteName}</title>
+
+	<meta charset="utf-8">
+	<meta name="author" content="Daniel Dolejška">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<meta name="description" content="{$service->meta->description}">
+	<meta name="keywords" content="{$service->meta->keywords}">
+
+
+	<meta property="og:url" content="{$_SERVER['REQUEST_SCHEME']}://{$_SERVER['HTTP_HOST']}{$_SERVER['REQUEST_URI']}">
+	<meta property="og:type" content="{$service->meta->type}">
+	<meta property="og:title" content="{ifset title}{include title|stripHtml} - {elseifset $title}{$title} - {/ifset}{$service->meta->siteName}">
+	<meta property="og:description" content="{$service->meta->description}">
+	{foreach $service->meta->images as $url => $info}
+	<meta property="og:image" content="{$_SERVER['REQUEST_SCHEME']}://{$_SERVER['HTTP_HOST']}{$url}">
+	<meta property="og:image:secure_url" content="https://{$_SERVER['HTTP_HOST']}{$url}">
+	<meta property="og:image:type" content="{$info['type']}">
+	<meta property="og:image:width" content="{$info['width']}">
+	<meta property="og:image:height" content="{$info['height']}">
+	{/foreach}
+	<meta property="fb:app_id" content="{$service->meta->facebook->app_id}" n:if="$service->meta->facebook->app_id">
+	<meta property="fb:pages" content="{implode(',', (array)$service->meta->facebook->page_ids)}" n:if="(array)$service->meta->facebook->page_ids">
+	<meta property="fb:admins" content="{implode(',', (array)$service->meta->facebook->admins)}" n:if="(array)$service->meta->facebook->admins">
+
+	<!-- // CSS & META \\ -->
+	<link href="https://use.fontawesome.com/releases/v5.6.3/css/all.css" rel="stylesheet" integrity="sha384-UHRtZLI+pbxtHCWp1t77Bi1L4ZtiqrqD80Kn4Z8NTSRyMA2Fd33n5dQ8lWUE00s/" crossorigin="anonymous">
+	<link href="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-GJzZqFGwb1QTTN6wy59ffF1BuGJpLSa9DkKMp0DgiMDm4iYMj70gZWKYbI706tWS" crossorigin="anonymous">
+	{block head}{/block}
+	<!-- \\ CSS & META // -->
+</head>
+
+<body>
+<!-- // HEADER \\ -->
+{include _header.latte}
+<!-- \\ HEADER // -->
+
+<!-- // CONTENT \\ -->
+<div id="alerts" n:class="container">
+	{ifset $flashes}
+	<div n:foreach="$flashes as $flash" n:class='alert, "alert-$flash->type", alert-dismissible, fade, show'>{$flash->message}<button type="button" class="close" data-dismiss="alert" aria-label="Zavřít"><span aria-hidden="true">&times;</span></button></div>
+	{/ifset}
+</div>
+{include content}
+
+<div class="modal fade" tabindex="-1" role="dialog" id="steam-login-force">
+	<div class="modal-dialog" role="document">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h5 class="modal-title">Steam Sign-in Required</h5>
+			</div>
+			<div class="modal-body">
+				<p>Please sign in with your Steam account to continue.</p>
+				<p n:ifcontent>{$service->steam->login->dialogContent|noescape}</p>
+				<div class="text-center">
+					<a href="{$Steam->_loginUrl}">
+						<img alt="Sign in" src="https://steamcommunity-a.akamaihd.net/public/images/signinthroughsteam/sits_02.png">
+					</a>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+
+<div class="modal fade" tabindex="-1" role="dialog" id="steam-login-prompt">
+	<div class="modal-dialog" role="document">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h5 class="modal-title">Steam Sign-in</h5>
+				<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+					<span aria-hidden="true">&times;</span>
+				</button>
+			</div>
+			<div class="modal-body">
+				<p>Please sign in with your Steam account.</p>
+				<div class="text-center">
+					<a href="{$Steam->_loginUrl}">
+						<img alt="Sign in" src="https://steamcommunity-a.akamaihd.net/public/images/signinthroughsteam/sits_02.png">
+					</a>
+				</div>
+			</div>
+			<div class="modal-footer">
+				<button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+			</div>
+		</div>
+	</div>
+</div>
+
+<div class="modal fade" tabindex="-1" role="dialog" id="no-events">
+	<div class="modal-dialog modal-sm" role="document">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h5 class="modal-title">No events were found!</h5>
+				<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+					<span aria-hidden="true">&times;</span>
+				</button>
+			</div>
+			<div class="modal-body text-center">
+				<p>There were no events found for this server/log selection.</p>
+				<p class="m-0">There are either no recorded events in selected log or the filters are too strict.</p>
+			</div>
+			<div class="modal-footer">
+				<button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+			</div>
+		</div>
+	</div>
+</div>
+<!-- \\ CONTENT // -->
+
+<!-- // FOOTER \\ -->
+{include _footer.latte}
+<!-- \\ FOOTER // -->
+
+<!-- // JS \\ -->
+<script src="https://code.jquery.com/jquery-3.3.1.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
+<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.min.js" integrity="sha256-VazP97ZCwtekAsvgPBSUwPFKdrwD3unUfSGVYrahUqU=" crossorigin="anonymous"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/js/bootstrap.min.js" integrity="sha384-B0UglyR+jN6CkvvICOB2joaf5I4l3gm9GU6Hc1og6Ls7i6U/mkkaduKaBhlAXv9k" crossorigin="anonymous"></script>
+{block scripts}{/block}
+<script type="text/javascript">
+	$(function () {
+		{if $service->steam->login->enabled && $service->steam->login->force}
+		$( "#steam-login-force" ).modal({
+			backdrop: 'static',
+			keyboard: false,
+		});
+		{elseif $service->steam->login->enabled && $service->steam->login->prompt}
+		{* TODO: Save to session, don't spam the dialog. *}
+		$( "#steam-login-prompt" ).modal('show');
+		{/if}
+	});
+</script>
+<!-- \\ JS // -->
+</body>
+</html>

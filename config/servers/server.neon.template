@@ -1,0 +1,68 @@
+#
+# Copyright (C) 2019  Daniel Dolejška
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.
+#
+
+##
+# Server configuration file
+##
+
+server:
+	id: server
+	name: Servers Name
+	group: Default Group
+
+map:
+	zones:
+		# Zone name
+		dummy_zone:
+			tooltip:
+				# By default (if content is null), zones name will be used as tooltip. Accepts HTML.
+				content: null
+			popup:
+				# By default (if content is null), popup won't be available. Accepts HTML.
+				content: null
+			options:
+				# Available options: https://leafletjs.com/reference-1.4.0.html#polygon
+				color: blue
+			bounds:
+				- [x, y]
+				- [x, y]
+
+
+##
+# Log source configuration
+##
+
+webdav:
+	enabled: no
+	baseUri:
+	directoryPath:
+	user:
+	pass:
+
+# TODO: FTP is not supported yet
+ftp:
+	enabled: no
+	host:
+	port:
+	directoryPath:
+	user:
+	pass:
+
+# TODO: local FS is not supported yet
+local:
+	enabled: no
+	basePath:

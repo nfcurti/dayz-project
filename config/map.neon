@@ -1,0 +1,193 @@
+#
+# Copyright (C) 2019  Daniel Dolejška
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.
+#
+
+##
+# Map configuration file
+##
+
+settings:
+	defaults:
+		baseLayer: Top
+	options:
+		center: [128, 128]
+		minZoom: 1
+		maxZoom: 12
+		zoom: 2
+		crs: Simple # Don't change. It will break the map.
+	dimensions:
+		# Internal Leaflet.js dimensions.
+		leafletMap:
+			width: 256
+			height: 256
+		# Real map dimensions.
+		referenceMap:
+			width: 15927.0  #15360.0
+			height: 15928.0 #15360.0
+
+# https://leafletjs.com/reference-1.4.0.html#control-layers
+baseLayers:
+	# Layer name - will be displayed in layer controls.
+	Top:
+		# URL used as source of tiles. Absolute/Relative path is accepted.
+		source: 'https://maps.izurvive.com/maps/CH-Top/1.11.7/tiles/{z}/{x}/{y}.png'
+		# Available options: https://leafletjs.com/reference-1.4.0.html#tilelayer
+		options:
+			attribution: 'Map data &copy; <a href="https://www.izurvive.com/">iZurvive</a>; Event viewer &copy; <a href="https://dayz-sa.cz/">DayZ-SA.cz</a>, Daniel Dolejška'
+			bounds: [[0, 0], [256, 256]]
+			minNativeZoom: 1
+			maxNativeZoom: 7
+			reuseTiles: true
+			noWrap: true
+			tms: true
+	Satellite:
+		source: 'https://maps.izurvive.com/maps/CH-Sat/1.11.7/tiles/{z}/{x}/{y}.png'
+		options:
+			attribution: 'Map data &copy; <a href="https://www.izurvive.com/">iZurvive</a>; Event viewer &copy; <a href="https://dayz-sa.cz/">DayZ-SA.cz</a>, Daniel Dolejška'
+			bounds: [[0, 0], [256, 256]]
+			minNativeZoom: 1
+			maxNativeZoom: 7
+			reuseTiles: true
+			noWrap: true
+			tms: true
+
+# TODO: Map overlay layers not yet implemented
+# https://leafletjs.com/reference-1.4.0.html#control-layers
+overlayLayers:
+
+# Marker types
+markers:
+	# Available options: https://leafletjs.com/reference-1.4.0.html#icon
+	blue:
+		iconUrl: https://cdn.rawgit.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-blue.png
+	red:
+		iconUrl: https://cdn.rawgit.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-red.png
+	green:
+		iconUrl: https://cdn.rawgit.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-green.png
+	yellow:
+		iconUrl: https://cdn.rawgit.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-yellow.png
+	orange:
+		iconUrl: https://cdn.rawgit.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-orange.png
+	violet:
+		iconUrl: https://cdn.rawgit.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-violet.png
+	grey:
+		iconUrl: https://cdn.rawgit.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-grey.png
+	black:
+		iconUrl: https://cdn.rawgit.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-black.png
+	death:
+		iconUrl: images/death.png
+	deathAnimal:
+		iconUrl: images/death_animal.png
+	deathCar:
+		iconUrl: images/death_car.png
+	deathExplosion:
+		iconUrl: images/death_explosion.png
+	deathSuicide:
+		iconUrl: images/death_suicide.png
+	deathZombie:
+		iconUrl: images/death_zombie.png
+	killer:
+		iconUrl: images/killer.png
+	placement:
+		iconUrl: images/placement.png
+	position:
+		iconUrl: images/position.png
+	trapActivation:
+		iconUrl: images/trap_activation.png
+	vehicleEnter:
+		iconUrl: images/vehicle_enter.png
+	vehicleExit:
+		iconUrl: images/vehicle_exit.png
+	hit:
+		iconUrl: images/wound_hit.png
+	shot:
+		iconUrl: images/wound_shot.png
+	connect:
+		iconUrl: images/connect.png
+	disconnect:
+		iconUrl: images/disconnect.png
+
+# Event display settings
+events:
+	KILLED_BY_PLAYER:
+		# Marker shown on map. Identifier specified in 'markers' section in this config.
+		marker: death
+		# When visually connecting events, this event will cause existing
+		# sequence to end.
+		terminatesSequence: yes
+		# When visually connecting events, this option will cause displaying
+		# lines to specified locations.
+		lineTo:
+			# Available options: https://leafletjs.com/reference-1.4.0.html#path
+			options:
+				color: '#ff0000'
+				weight: 2
+				opacity: 0.8
+				dashArray: 5
+			# Position attribute mapping. Uses keys as subobjects of event's data.
+			# killer: position = { ..., killer: { ..., position: { x: ..., y: ..., z: ... } } }
+			targets:
+				killer: position
+	KILLED_PLAYER:
+		marker: killer
+		terminatesSequence: no
+		lineTo:
+			options:
+				color: '#ff0000'
+				weight: 2
+				opacity: 0.8
+				dashArray: 5
+			targets:
+				victim: position
+	KILLED_BY_CAR:
+		marker: deathCar
+		terminatesSequence: yes
+	KILLED_BY_LANDMINETRAP:
+		marker: deathExplosion
+		terminatesSequence: yes
+	KILLED_BY_ZOMBIE:
+		marker: deathZombie
+		terminatesSequence: yes
+	SUICIDE:
+		marker: deathSuicide
+		terminatesSequence: yes
+	TRAP_ACTIVATED:
+		marker: trapActivation
+		terminatesSequence: no
+	PLACED:
+		marker: placement
+		terminatesSequence: no
+	VEHICLE_ENTER:
+		marker: vehicleEnter
+		terminatesSequence: no
+	VEHICLE_LEFT:
+		marker: vehicleExit
+		terminatesSequence: no
+	VEHICLE_DRIVER_ENTER:
+		marker: vehicleEnter
+		terminatesSequence: no
+	VEHICLE_DRIVER_LEFT:
+		marker: vehicleExit
+		terminatesSequence: no
+	PLAYER_POSITION:
+		marker: position
+		terminatesSequence: no
+	CONNECTED:
+		marker: connect
+		terminatesSequence: no
+	DISCONNECTED:
+		marker: disconnect
+		terminatesSequence: yes
